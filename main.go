@@ -55,7 +55,7 @@ func sendEmail(paths []string) {
 	// New email simple html with inline and CC
 	email := mail.NewMSG()
 	email.SetFrom("convert <" + _data.SERVER_USERNAME+">").
-		AddTo(_data.EMAIL_ADDTO).
+		AddTo(_data.EMAIL_KINDLE).
 		AddCc(_data.EMAIL_ADDCC).
 		SetSubject("convert")
 
