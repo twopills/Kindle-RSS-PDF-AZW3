@@ -54,7 +54,7 @@ func sendEmail(paths []string) {
 
 	// New email simple html with inline and CC
 	email := mail.NewMSG()
-	email.SetFrom("convert " + _data.SERVER_USERNAME).
+	email.SetFrom("convert <" + _data.SERVER_USERNAME+">").
 		AddTo(_data.EMAIL_ADDTO).
 		AddCc(_data.EMAIL_ADDCC).
 		SetSubject("convert")
@@ -177,7 +177,7 @@ func orchestrator(url string) {
 	takeHtmlElement(cryptoNews, cryptoTitles) // -> load application
 
 	if cryptoTitles != nil {
-		// sendEmail(cryptoTitles)
+		sendEmail(cryptoTitles)
 		removeContents("tmp")
 	}
 }
@@ -221,5 +221,5 @@ func readData(path string) {
 
 func main() {
 	readData("keys")
-	orchestrator(_data.PATH_1)
+	orchestrator(_data.PATH_2)
 }
