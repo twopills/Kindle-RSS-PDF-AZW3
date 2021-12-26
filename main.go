@@ -60,7 +60,7 @@ func sendEmail(paths []string) {
 		SetSubject("convert")
 
 	for _, path := range paths {
-		email.Attach(&mail.File{FilePath: path, Name: path, Inline: true})
+		email.Attach(&mail.File{FilePath: "./tmp/"+path, Name: path, Inline: true})
 	}
 
 	// always check error after send
@@ -73,6 +73,7 @@ func sendEmail(paths []string) {
 	// Call Send and pass the client
 	err = email.Send(smtpClient)
 	if err != nil {
+		removeContents("tmp")
 		log.Println(err)
 	} else {
 		log.Println("Email Sent ")
