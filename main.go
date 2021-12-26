@@ -222,11 +222,13 @@ func readData(path string) {
 }
 
 func task(){
+	log.Printf("Task created")
 	readData("keys")
 	orchestrator(_data.PATH_2)
 }
 
 func createScheduler(time string){
+	log.Printf("Run Scheduler")
 	s := gocron.NewScheduler()
 	s.Every(1).Day().At(time).Do(task)
 	<-s.Start()
