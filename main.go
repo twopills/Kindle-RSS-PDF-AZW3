@@ -13,6 +13,7 @@ import (
 
 	wkhtml "github.com/SebastiaanKlippert/go-wkhtmltopdf"
 	readability "github.com/go-shiori/go-readability"
+	"github.com/jasonlvhit/gocron"
 	gofeed "github.com/mmcdole/gofeed"
 	mail "github.com/xhit/go-simple-mail/v2"
 )
@@ -220,7 +221,17 @@ func readData(path string) {
 
 }
 
-func main() {
+func task(){
 	readData("keys")
 	orchestrator(_data.PATH_2)
+}
+
+func createScheduler(time string){
+	s := gocron.NewScheduler()
+	s.Every(1).Day().At(time).Do(task)
+	<-s.Start()
+}
+
+func main() {
+	createScheduler("08:30")
 }

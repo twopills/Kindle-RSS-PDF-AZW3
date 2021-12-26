@@ -9,6 +9,7 @@ require (
 	github.com/go-shiori/dom v0.0.0-20210627111528-4e4722cd0d65 // indirect
 	github.com/go-shiori/go-readability v0.0.0-20210627123243-82cc33435520 // indirect
 	github.com/gogs/chardet v0.0.0-20211120154057-b7413eaefb8f // indirect
+	github.com/jasonlvhit/gocron v0.0.1 // indirect
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/mmcdole/gofeed v1.1.3 // indirect
 	github.com/mmcdole/goxpp v0.0.0-20181012175147-0068e33feabf // indirect
