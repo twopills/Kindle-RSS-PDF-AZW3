@@ -7,7 +7,9 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -84,7 +86,7 @@ func sendEmail(paths []string) {
 func takeHtmlElement(urls []string, titles []string) {
 	e := os.Mkdir("tmp", 0700)
 	if e != nil {
-		log.Fatalln(e)
+		log.Fatalln("ERROR! Please manualy remove your tmp folder")
 	}
 	for i, url := range urls {
 		article, err := readability.FromURL(url, 30*time.Second)
@@ -110,6 +112,7 @@ func createPDFFromHtml(_html string, i int, title string) {
 	// For use wkhtml, install first -> https://wkhtmltopdf.org/downloads.html
 	pdfg, err := wkhtml.NewPDFGenerator()
 	if err != nil {
+		openbrowser("https://wkhtmltopdf.org/downloads.html")
 		log.Fatalln(err)
 	}
 
@@ -227,6 +230,25 @@ func task(){
 	orchestrator(_data.PATH_2)
 }
 
+func openbrowser(url string) {
+	var err error
+
+	switch runtime.GOOS {
+	case "linux":
+		err = exec.Command("xdg-open", url).Start()
+	case "windows":
+		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+	case "darwin":
+		err = exec.Command("open", url).Start()
+	default:
+		err = fmt.Errorf("unsupported platform")
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
+
 func createScheduler(time string){
 	log.Printf("Run Scheduler")
 	s := gocron.NewScheduler()
@@ -235,5 +257,10 @@ func createScheduler(time string){
 }
 
 func main() {
+	fmt.Println("*________________________*")
+	fmt.Println("*                        *")
+	fmt.Println("*        WELCOME         *")
+	fmt.Println("*                        *")
+	fmt.Println("*________________________*")
 	createScheduler("08:30")
 }
