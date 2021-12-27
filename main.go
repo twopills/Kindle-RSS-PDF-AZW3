@@ -161,20 +161,20 @@ func orchestrator(url string) {
 	fp := gofeed.NewParser()
 	feed, _ := fp.ParseURL(url)
 	items := feed.Items
-
+	if(1==2){log.Print(items)}
 	cryptoNews := []string{}
 	cryptoTitles := []string{}
 
-	// feeds := takeFeeds()
+	feeds := takeFeeds()
 
-	// for _, feed := range feeds {
-	for index, item := range items {
-		if index <= 5 {
-			cryptoNews = append(cryptoNews, item.Link)
-			cryptoTitles = append(cryptoTitles, formatterTitle(item.Title)+".pdf")
+	for _, feed := range feeds {
+		for index, item := range feed.Items {
+			if index <= 5 {
+				cryptoNews = append(cryptoNews, item.Link)
+				cryptoTitles = append(cryptoTitles, formatterTitle(item.Title)+".pdf")
+			}
 		}
 	}
-	// }
 
 	takeHtmlElement(cryptoNews, cryptoTitles) // -> load application
 
