@@ -235,5 +235,6 @@ func createScheduler(time string){
 }
 
 func main() {
-	createScheduler("08:30")
+	// createScheduler("08:30")
+	task()
 }
