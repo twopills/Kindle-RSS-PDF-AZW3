@@ -7,7 +7,9 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"time"
 
@@ -55,13 +57,13 @@ func sendEmail(paths []string) {
 
 	// New email simple html with inline and CC
 	email := mail.NewMSG()
-	email.SetFrom("convert <" + _data.SERVER_USERNAME+">").
+	email.SetFrom("convert <" + _data.SERVER_USERNAME + ">").
 		AddTo(_data.EMAIL_KINDLE).
 		AddCc(_data.EMAIL_ADDCC).
 		SetSubject("convert")
 
 	for _, path := range paths {
-		email.Attach(&mail.File{FilePath: "./tmp/"+path, Name: path, Inline: true})
+		email.Attach(&mail.File{FilePath: "./tmp/" + path, Name: path, Inline: true})
 	}
 
 	// always check error after send
@@ -84,7 +86,7 @@ func sendEmail(paths []string) {
 func takeHtmlElement(urls []string, titles []string) {
 	e := os.Mkdir("tmp", 0700)
 	if e != nil {
-		log.Fatalln(e)
+		log.Fatalln("ERROR! Please manualy remove your tmp folder")
 	}
 	for i, url := range urls {
 		article, err := readability.FromURL(url, 30*time.Second)
@@ -110,6 +112,7 @@ func createPDFFromHtml(_html string, i int, title string) {
 	// For use wkhtml, install first -> https://wkhtmltopdf.org/downloads.html
 	pdfg, err := wkhtml.NewPDFGenerator()
 	if err != nil {
+		openbrowser("https://wkhtmltopdf.org/downloads.html")
 		log.Fatalln(err)
 	}
 
@@ -161,20 +164,22 @@ func orchestrator(url string) {
 	fp := gofeed.NewParser()
 	feed, _ := fp.ParseURL(url)
 	items := feed.Items
-
+	if 1 == 2 {
+		log.Print(items)
+	}
 	cryptoNews := []string{}
 	cryptoTitles := []string{}
 
-	// feeds := takeFeeds()
+	feeds := takeFeeds()
 
-	// for _, feed := range feeds {
-	for index, item := range items {
-		if index <= 5 {
-			cryptoNews = append(cryptoNews, item.Link)
-			cryptoTitles = append(cryptoTitles, formatterTitle(item.Title)+".pdf")
+	for _, feed := range feeds {
+		for index, item := range feed.Items {
+			if index <= 5 {
+				cryptoNews = append(cryptoNews, item.Link)
+				cryptoTitles = append(cryptoTitles, formatterTitle(item.Title)+".pdf")
+			}
 		}
 	}
-	// }
 
 	takeHtmlElement(cryptoNews, cryptoTitles) // -> load application
 
@@ -221,13 +226,32 @@ func readData(path string) {
 
 }
 
-func task(){
+func task() {
 	log.Printf("Task created")
 	readData("keys")
 	orchestrator(_data.PATH_2)
 }
 
-func createScheduler(time string){
+func openbrowser(url string) {
+	var err error
+
+	switch runtime.GOOS {
+	case "linux":
+		err = exec.Command("xdg-open", url).Start()
+	case "windows":
+		err = exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Start()
+	case "darwin":
+		err = exec.Command("open", url).Start()
+	default:
+		err = fmt.Errorf("unsupported platform")
+	}
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
+
+func createScheduler(time string) {
 	log.Printf("Run Scheduler")
 	s := gocron.NewScheduler()
 	s.Every(1).Day().At(time).Do(task)
@@ -235,6 +259,11 @@ func createScheduler(time string){
 }
 
 func main() {
+	fmt.Println("*________________________*")
+	fmt.Println("*                        *")
+	fmt.Println("*        WELCOME         *")
+	fmt.Println("*                        *")
+	fmt.Println("*________________________*")
 	// createScheduler("08:30")
 	task()
 }
