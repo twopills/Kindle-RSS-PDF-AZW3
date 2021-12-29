@@ -52,6 +52,8 @@ func sendEmail(paths []string) {
 	smtpClient, err := server.Connect()
 
 	if err != nil {
+		fmt.Println("MI ROMPO IO: ")
+		fmt.Println("")
 		log.Fatal(err)
 	}
 
@@ -86,9 +88,11 @@ func sendEmail(paths []string) {
 func takeHtmlElement(urls []string, titles []string) {
 	e := os.Mkdir("tmp", 0700)
 	if e != nil {
+		removeContents("tmp")
 		log.Fatalln("ERROR! Please manualy remove your tmp folder")
 	}
 	for i, url := range urls {
+		fmt.Println("LA MIA URL: ", url)
 		article, err := readability.FromURL(url, 30*time.Second)
 		if err != nil {
 			log.Fatalf("failed to parse %s, %v\n", url, err)
@@ -101,9 +105,11 @@ func takeHtmlElement(urls []string, titles []string) {
 
 		htmlBytes, e := ioutil.ReadFile(fmt.Sprintf("./tmp/html-%02d.html", i+1))
 		if e != nil {
-			log.Fatalln(e)
+			log.Fatalln("SONO IO A FALLIRE: ", e)
+			log.Fatalln("")
 		}
-		createPDFFromHtml(string(htmlBytes), i, titles[i])
+		// createPDFFromHtml(string(htmlBytes), i, titles[i])
+		_createPDFFromHtml(string(htmlBytes), i, titles[i], url)
 	}
 }
 
@@ -121,6 +127,35 @@ func createPDFFromHtml(_html string, i int, title string) {
 	err = pdfg.Create()
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	dN := "./tmp/" + title
+	err = pdfg.WriteFile(dN)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Done")
+	fmt.Println("URL CREATE PDF: ", title)
+	fmt.Println("")
+}
+
+func _createPDFFromHtml(_html string, i int, title string, url string) {
+	fmt.Println("ENTRO")
+	fmt.Println(" ")
+	// For use wkhtml, install first -> https://wkhtmltopdf.org/downloads.html
+	pdfg, err := wkhtml.NewPDFGenerator()
+	if err != nil {
+		openbrowser("https://wkhtmltopdf.org/downloads.html")
+		log.Fatalln(err)
+	}
+
+	page := wkhtml.NewPage(url)
+	pdfg.AddPage(page)
+	err = pdfg.Create()
+	if err != nil {
+		fmt.Println("Salto l'errore e genero il report")
+		// log.Fatal("MI ROMPO: ", err)
 	}
 
 	dN := "./tmp/" + title
@@ -184,8 +219,9 @@ func orchestrator(url string) {
 	takeHtmlElement(cryptoNews, cryptoTitles) // -> load application
 
 	if cryptoTitles != nil {
-		sendEmail(cryptoTitles)
-		removeContents("tmp")
+		fmt.Println("EMAIL INVIATA")
+		// sendEmail(cryptoTitles)
+		// removeContents("tmp")
 	}
 }
 
@@ -264,6 +300,8 @@ func main() {
 	fmt.Println("*        WELCOME         *")
 	fmt.Println("*                        *")
 	fmt.Println("*________________________*")
-	// createScheduler("08:30")
-	task()
+	// createScheduler("11:36")
+	// task()
+	// paths := []string{path esempio}
+	// sendEmail(paths)
 }

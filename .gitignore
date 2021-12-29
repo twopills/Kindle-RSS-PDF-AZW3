@@ -17,3 +17,6 @@
 # credentials
 
 keys.json
+
+# tmp folder
+/tmp
