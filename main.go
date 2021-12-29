@@ -52,6 +52,7 @@ func sendEmail(paths []string) {
 	smtpClient, err := server.Connect()
 
 	if err != nil {
+		createLogger(err.Error())
 		log.Fatal(err)
 	}
 
@@ -76,6 +77,7 @@ func sendEmail(paths []string) {
 	// Call Send and pass the client
 	err = nil//email.Send(smtpClient)
 	if err != nil {
+		createLogger(err.Error())
 		removeContents("tmp")
 		log.Println(err, smtpClient)
 	} else {
@@ -84,13 +86,15 @@ func sendEmail(paths []string) {
 }
 
 func takeHtmlElement(urls []string, titles []string) {
-	e := os.Mkdir("tmp", 0700)
-	if e != nil {
+	err := os.Mkdir("tmp", 0700)
+	if err != nil {
+		createLogger(err.Error())
 		log.Fatalln("ERROR! Please manualy remove your tmp folder")
 	}
 	for i, url := range urls {
 		article, err := readability.FromURL(url, 30*time.Second)
 		if err != nil {
+			createLogger(err.Error())
 			log.Fatalf("failed to parse %s, %v\n", url, err)
 		}
 
@@ -99,9 +103,10 @@ func takeHtmlElement(urls []string, titles []string) {
 
 		dstHTMLFile.WriteString(article.Content)
 
-		htmlBytes, e := ioutil.ReadFile(fmt.Sprintf("./tmp/html-%02d.html", i+1))
-		if e != nil {
-			log.Fatalln(e)
+		htmlBytes, err := ioutil.ReadFile(fmt.Sprintf("./tmp/html-%02d.html", i+1))
+		if err != nil {
+			createLogger(err.Error())
+			log.Fatalln(err)
 		}
 		createPDFFromHtml(string(htmlBytes), i, titles[i])
 	}
@@ -112,6 +117,7 @@ func createPDFFromHtml(_html string, i int, title string) {
 	// For use wkhtml, install first -> https://wkhtmltopdf.org/downloads.html
 	pdfg, err := wkhtml.NewPDFGenerator()
 	if err != nil {
+		createLogger(err.Error())
 		openbrowser("https://wkhtmltopdf.org/downloads.html")
 		log.Fatalln(err)
 	}
@@ -120,12 +126,14 @@ func createPDFFromHtml(_html string, i int, title string) {
 
 	err = pdfg.Create()
 	if err != nil {
+		createLogger(err.Error())
 		log.Fatal(err)
 	}
 
 	dN := "./tmp/" + title
 	err = pdfg.WriteFile(dN)
 	if err != nil {
+		createLogger(err.Error())
 		log.Fatal(err)
 	}
 
@@ -134,7 +142,7 @@ func createPDFFromHtml(_html string, i int, title string) {
 	fmt.Println("")
 }
 
-func formatterTitle(title string) string {
+func textFormatter(title string) string {
 	title = strings.ReplaceAll(title, "ì", "i")
 	title = strings.ReplaceAll(title, "è", "e")
 	title = strings.ReplaceAll(title, "ò", "o")
@@ -174,7 +182,7 @@ func orchestrator(url string) {
 		for index, item := range feed.Items {
 			if index <= 5 {
 				cryptoNews = append(cryptoNews, item.Link)
-				cryptoTitles = append(cryptoTitles, formatterTitle(item.Title)+".pdf")
+				cryptoTitles = append(cryptoTitles, textFormatter(item.Title)+".pdf")
 			}
 		}
 	}
@@ -190,16 +198,19 @@ func orchestrator(url string) {
 func removeContents(dir string) error {
 	d, err := os.Open(dir)
 	if err != nil {
+		createLogger(err.Error())
 		return err
 	}
 	defer d.Close()
 	names, err := d.Readdirnames(-1)
 	if err != nil {
+		createLogger(err.Error())
 		return err
 	}
 	for _, name := range names {
 		err = os.RemoveAll(filepath.Join(dir, name))
 		if err != nil {
+			createLogger(err.Error())
 			return err
 		}
 	}
@@ -213,12 +224,14 @@ func readData(path string) {
 	// read file
 	data, err := ioutil.ReadFile(path + ".json")
 	if err != nil {
+		createLogger(err.Error())
 		fmt.Print(err)
 	}
 
 	// unmarshall it
 	err = json.Unmarshal(data, &_data)
 	if err != nil {
+		createLogger(err.Error())
 		fmt.Println("error:", err)
 	}
 
@@ -244,9 +257,34 @@ func openbrowser(url string) {
 		err = fmt.Errorf("unsupported platform")
 	}
 	if err != nil {
+		createLogger(err.Error())
 		log.Fatal(err)
 	}
 
+}
+
+func createLogger(content string){
+	err := os.Mkdir("logger", 0700)
+	if err != nil{
+		fmt.Println("Exist folder? No prob, i remove and recreate them!")
+		removeContents("logger")
+		os.Mkdir("logger", 0700)
+	}
+	timestamp := textFormatter(time.Now().String())
+	f, err := os.Create("./logger/"+timestamp+".txt")
+
+    if err != nil {
+		createLogger(err.Error())
+        log.Fatal(err)
+    }
+
+    defer f.Close()
+
+    _, err2 := f.WriteString(content)
+
+    if err2 != nil {
+        log.Fatal(err2)
+    }
 }
 
 func createScheduler(time string){
@@ -262,5 +300,6 @@ func main() {
 	fmt.Println("*        WELCOME         *")
 	fmt.Println("*                        *")
 	fmt.Println("*________________________*")
-	createScheduler("08:30")
+	// createScheduler("08:30")
+	createLogger("test")
 }
