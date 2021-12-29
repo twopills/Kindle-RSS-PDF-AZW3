@@ -74,10 +74,10 @@ func sendEmail(paths []string) {
 	}
 
 	// Call Send and pass the client
-	err = nil//email.Send(smtpClient)
+	err = email.Send(smtpClient)
 	if err != nil {
 		removeContents("tmp")
-		log.Println(err, smtpClient)
+		log.Println(err)
 	} else {
 		log.Println("Email Sent ")
 	}
@@ -262,5 +262,5 @@ func main() {
 	fmt.Println("*        WELCOME         *")
 	fmt.Println("*                        *")
 	fmt.Println("*________________________*")
-	createScheduler("23:51:40")
+	createScheduler("08:30")
 }
