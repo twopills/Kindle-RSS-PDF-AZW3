@@ -21,3 +21,6 @@ keys.json
 # tmp folder
 
 /tmp
+
+# logger
+/logger
