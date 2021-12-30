@@ -14,15 +14,16 @@ func main() {
 	createScheduler("08:30")
 }
 
-func orchestrator() {
+func orchestrator(numberOfArticlesForPaths int) {
 	cryptoNews := []string{}
 	cryptoTitles := []string{}
+	filters := _data.FILTER_ROLE
 
 	feeds := takeFeeds()
 
 	for _, feed := range feeds {
 		for index, item := range feed.Items {
-			if index <= 5 {
+			if !FilterNews(filters, item.Title) && index <= numberOfArticlesForPaths {
 				cryptoNews = append(cryptoNews, item.Link)
 				cryptoTitles = append(cryptoTitles, formatterTitle(item.Title)+".pdf")
 			}
@@ -52,7 +53,7 @@ func createScheduler(time string){
 func task(){
 	log.Printf("Task created")
 	readData("keys")
-	orchestrator()
+	orchestrator(5)
 }
 
 func takeFeeds() []*gofeed.Feed {

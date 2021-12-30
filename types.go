@@ -9,4 +9,5 @@ type SECREAT_DATA struct {
 	EMAIL_KINDLE    string
 	PATH_1          string
 	PATH_2          string
+	FILTER_ROLE 	[]string
 }

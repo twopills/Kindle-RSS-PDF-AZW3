@@ -166,13 +166,28 @@ func sendEmail(paths []string) {
 	}
 
 	// Call Send and pass the client
-	err = email.Send(smtpClient)
+	err = nil // email.Send(smtpClient)
 	if err != nil {
 		removeContents("tmp")
 		log.Println(err)
+		log.Println(smtpClient)
 	} else {
 		removeContents("tmp")
 		log.Println("Email Sent ")
 		createScheduler("08:30")
 	}
 }
+
+/**
+	@filter tutte le parole che non si vogliono vedere
+*/
+
+func FilterNews(filters []string, titleNews string) bool{
+	for _, f := range filters {
+		if strings.Contains(strings.ToLower(titleNews), f) {
+			return true
+		}
+	}
+	return false
+}
+
