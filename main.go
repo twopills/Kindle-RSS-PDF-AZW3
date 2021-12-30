@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	createScheduler("12:10")
+	createScheduler("08:30")
 }
 
 func orchestrator() {
