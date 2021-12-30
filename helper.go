@@ -166,7 +166,7 @@ func sendEmail(paths []string) {
 	}
 
 	// Call Send and pass the client
-	err = nil // email.Send(smtpClient)
+	err = email.Send(smtpClient)
 	if err != nil {
 		removeContents("tmp")
 		log.Println(err)
