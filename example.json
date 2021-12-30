@@ -5,5 +5,7 @@
   "EMAIL_ADDTO": "",
   "EMAIL_ADDCC": "",
   "EMAIL_KINDLE": "",
-  "PATH_1": ""
+  "PATH_1": "",
+  "PATH_2": "",
+  "FILTER_ROLE": []
 }
