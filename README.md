@@ -22,7 +22,7 @@ The `Kindle RSS PDF AZW3 ` is a personal project. I received a Kindle for Christ
 
 ## Use
 
-* Take articles from Google News
+* Take articles from RSS News
 * Transform from html to pdf
 * Send to my kindle
 
