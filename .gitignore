@@ -24,3 +24,7 @@ keys.json
 
 # logger
 /logger
+
+#build
+kindle_rss_mobi
+kindle_rss_pdf_azw3

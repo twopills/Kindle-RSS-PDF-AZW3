@@ -10,10 +10,6 @@ import (
 	gofeed "github.com/mmcdole/gofeed"
 )
 
-func main() {
-	createScheduler("08:30")
-}
-
 func orchestrator(numberOfArticlesForPaths int) {
 	cryptoNews := []string{}
 	cryptoTitles := []string{}
@@ -82,6 +78,12 @@ func readData(path string) {
 	}
 }
 
+type Person struct {
+	Name string
+	Age int
 
+} 
 
-
+func main() {
+	createScheduler("08:30")
+}

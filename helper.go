@@ -67,13 +67,13 @@ func createPDFFromHtml(_html string, i int, title string) {
 	}
 
 	pdfg.AddPage(wkhtml.NewPageReader(strings.NewReader(_html)))
-
+	
 	err = pdfg.Create()
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	dN := "./tmp/" + title
+	
 	err = pdfg.WriteFile(dN)
 	if err != nil {
 		log.Fatal(err)
@@ -110,10 +110,10 @@ func takeHtmlElement(urls []string, titles []string) {
 		if err != nil {
 			log.Fatalf("failed to parse %s, %v\n", url, err)
 		}
-
+		
 		dstHTMLFile, _ := os.Create(fmt.Sprintf("./tmp/html-%02d.html", i+1))
 		defer dstHTMLFile.Close()
-
+		
 		dstHTMLFile.WriteString(article.Content)
 
 		htmlBytes, e := ioutil.ReadFile(fmt.Sprintf("./tmp/html-%02d.html", i+1))
@@ -174,7 +174,6 @@ func sendEmail(paths []string) {
 	} else {
 		removeContents("tmp")
 		log.Println("Email Sent ")
-		createScheduler("08:30")
 	}
 }
 

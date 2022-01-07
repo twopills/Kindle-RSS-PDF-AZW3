@@ -1,4 +1,4 @@
-module kindle_rss_mobi
+module kindle_rss_pdf_azw3
 
 go 1.17
 
