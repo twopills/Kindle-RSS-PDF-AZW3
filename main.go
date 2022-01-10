@@ -78,12 +78,6 @@ func readData(path string) {
 	}
 }
 
-type Person struct {
-	Name string
-	Age int
-
-} 
-
 func main() {
 	createScheduler("08:30")
 }
